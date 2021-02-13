@@ -1,4 +1,5 @@
 @import-normalize;
+@import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 body {
   margin: 0;

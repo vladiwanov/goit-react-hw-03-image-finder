@@ -1,65 +1,49 @@
-// import { ToastContainer, toast } from 'react-toastify'
-import { Component } from 'react';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import ImageGallery from './ImageGallery';
-import Searchbar from './Searchbar';
-import Button from './Button';
+import React, { Component } from 'react';
+import Searchbar from './Components/Searchbar/Searchbar';
+import ImageGallery from 'Components/ImageGallery/ImageGallery';
+import Modal from './Components/Modal';
 
-const BASE_URL = 'https://pixabay.com/api';
-const API_KEY = '19172915-1886b55ac07c270b02db4da6f';
-const perPage = 4;
+const perPage = 24;
 let page = 1;
 
-class App extends Component {
+export default class App extends Component {
   state = {
-    imageName: '',
-    // status:'idle'
+    searchName: '',
+    showModal: false,
   };
 
-  // componentDidUpdate(prevProps, prevState) {
-  //     const prevName = prevState.imageName;
-  //     const newName = this.state.imageName;
-  //     if (prevName !== newName) {
-  //         console.log('новое состояние', this.state)
-  //         console.log('предыдущее состояние',prevState);
-  //         page = 1
-  //         // this.getImages()
-  //         FetchImages(newName, page, perPage)
-  //             .then(response => {
-  //                 this.setState({ images: response.hits })
-  //                 console.log('массив объектов изображений :', this.state.images)
-  //             })
-  //             .catch(console.error())
-  //         return
-  //     }
-  //     console.log("они равны")
-  //     console.log('this.state', this.state)
-  //         console.log('prevState',prevState);
+  getSearchName = name => {
+    this.setState({ searchName: name });
+  };
 
-  //         ;
-  // }
-
-  handleFormSubmit = name => {
-    this.setState({ imageName: name });
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
   };
 
   render() {
-    const {
-      imageName,
-      // status
-    } = this.state;
+    const { searchName, showModal } = this.state;
     return (
       <>
-        <Searchbar onChangeName={this.handleFormSubmit} />
-        <ImageGallery
-          imageRequest={{ imageName, BASE_URL, API_KEY, perPage, page }}
-        />
-        <Button loadMore={page} />
-        <Loader type="ThreeDots" color="#00BFFF" height={80} width={80} />
+        <Searchbar onChangeName={this.getSearchName} />
+        <ImageGallery params={{ searchName, perPage }} />
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <h2>Hi, it's a modal window</h2>
+            <i>
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem
+              vitae at ab aspernatur, unde quas excepturi quia eaque illo quod,
+              omnis exercitationem alias, similique aliquam ipsam provident
+              molestiae pariatur doloribus?
+            </i>
+            <button className="Button" onClick={this.toggleModal}>
+              Close
+            </button>
+          </Modal>
+        )}
+        <button className="Button" onClick={this.toggleModal}>
+          open Modal
+        </button>
       </>
     );
   }
 }
-
-export default App;
