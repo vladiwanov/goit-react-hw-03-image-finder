@@ -2,11 +2,11 @@ const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '19172915-1886b55ac07c270b02db4da6f';
 
 export default function SearchApi(
-  page,
   searchName,
   perPage,
+  page,
   onChangeState,
-  onScroll,
+  onGetError,
 ) {
   const add = `${BASE_URL}?q=${searchName}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`;
   fetch(add)
@@ -14,24 +14,9 @@ export default function SearchApi(
       if (response.ok) {
         return response.json();
       }
-      Promise.reject(new Error('ошибка поиска'));
+      Promise.reject(new Error('ошибка поиска' + response.status));
     })
     // .then(response => onChangeState({ status: 'resolved', images: response.hits, error:null }))
-    .then(response =>
-      onChangeState([
-        { status: 'resolved' },
-        { images: response.hits },
-        { error: null },
-      ]),
-    )
-
-    // .catch(error => onChangeState({ error:'ERROR' ,status: 'rejected', images:[] }))
-    .catch(error =>
-      onChangeState([
-        { error: 'ERROR' },
-        { status: 'rejected' },
-        { images: [] },
-      ]),
-    );
-  // .finally(setTimeout(onScroll(),1000))
+    .then(response => onChangeState(response.hits))
+    .catch(error => onGetError('ERROR' + error.status));
 }

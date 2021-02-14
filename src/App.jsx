@@ -3,8 +3,8 @@ import Searchbar from './Components/Searchbar/Searchbar';
 import ImageGallery from 'Components/ImageGallery/ImageGallery';
 import Modal from './Components/Modal';
 
-const perPage = 24;
-let page = 1;
+const perPage = 12;
+// let page = 1;
 
 export default class App extends Component {
   state = {
@@ -25,7 +25,11 @@ export default class App extends Component {
     return (
       <>
         <Searchbar onChangeName={this.getSearchName} />
-        <ImageGallery params={{ searchName, perPage }} />
+        <ImageGallery
+          params={{ searchName, perPage }}
+          // onToggleModal={this.toggleModal}
+        />
+
         {showModal && (
           <Modal onClose={this.toggleModal}>
             <h2>Hi, it's a modal window</h2>
@@ -40,9 +44,6 @@ export default class App extends Component {
             </button>
           </Modal>
         )}
-        <button className="Button" onClick={this.toggleModal}>
-          open Modal
-        </button>
       </>
     );
   }
