@@ -19,20 +19,29 @@ export default class ImageGallery extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { searchName, perPage } = this.props.params;
+    const {
+      searchName,
+      // perPage
+    } = this.props.params;
     if (prevProps.params.page !== this.props.params.page) {
       this.loadMoreGallery();
     }
     if (prevProps.params.searchName !== this.props.params.searchName) {
-      this.getImageGallery(searchName, perPage);
+      this.getImageGallery(
+        searchName,
+        // perPage
+      );
     }
   }
 
-  getImageGallery = (searchName, perPage) => {
+  getImageGallery = (
+    searchName,
+    // perPage
+  ) => {
     this.setState({ page: 1, status: 'pending', images: [] });
     SearchApi(
       searchName,
-      perPage,
+      // perPage,
       this.state.page,
       this.changeState,
       this.getError,
@@ -44,10 +53,13 @@ export default class ImageGallery extends Component {
       page: prevState.page + 1,
       status: 'pending',
     }));
-    const { searchName, perPage } = this.props.params;
+    const {
+      searchName,
+      // perPage
+    } = this.props.params;
     SearchApi(
       searchName,
-      perPage,
+      // perPage,
       this.state.page + 1,
       this.changeState,
       this.getError,

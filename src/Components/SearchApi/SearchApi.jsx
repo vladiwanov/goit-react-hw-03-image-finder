@@ -1,10 +1,11 @@
 import Error from 'react';
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '19172915-1886b55ac07c270b02db4da6f';
+const perPage = 12;
 
 export default function SearchApi(
   searchName,
-  perPage,
+  // perPage,
   page,
   onChangeState,
   onGetError,
