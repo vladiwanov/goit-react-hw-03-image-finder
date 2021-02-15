@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ImageGalleryItem from 'Components/ImageGalleryItem/ImageGalleryItem';
 import SearchApi from 'Components/SearchApi/SearchApi';
 import Button from 'Components/Button';
+import Modal from '../Modal';
 
 export default class ImageGallery extends Component {
   state = {
@@ -9,13 +10,19 @@ export default class ImageGallery extends Component {
     status: 'idle',
     error: null,
     page: 1,
-    // searchName:'',
+    showModal: false,
+    activeEl: 0,
   };
+
+  componentDidMount() {
+    window.addEventListener('click', this.openModal);
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const { searchName, perPage } = this.props.params;
-    const { page } = this.state;
-
+    if (prevProps.params.page !== this.props.params.page) {
+      this.loadMoreGallery();
+    }
     if (prevProps.params.searchName !== this.props.params.searchName) {
       this.getImageGallery(searchName, perPage);
     }
@@ -23,7 +30,6 @@ export default class ImageGallery extends Component {
 
   getImageGallery = (searchName, perPage) => {
     this.setState({ page: 1, status: 'pending', images: [] });
-    // const page = 1;
     SearchApi(
       searchName,
       perPage,
@@ -31,7 +37,6 @@ export default class ImageGallery extends Component {
       this.changeState,
       this.getError,
     );
-    // SearchApi(searchName, perPage, page, this.changeState)
   };
 
   loadMoreGallery = () => {
@@ -40,8 +45,6 @@ export default class ImageGallery extends Component {
       status: 'pending',
     }));
     const { searchName, perPage } = this.props.params;
-    console.log('searchName, perPage', searchName, perPage);
-
     SearchApi(
       searchName,
       perPage,
@@ -52,7 +55,10 @@ export default class ImageGallery extends Component {
   };
 
   changeState = rez => {
-    console.log('результат фетча:', rez);
+    if (rez.length === 0) {
+      this.setState({ status: 'rejected' });
+      return;
+    }
     this.setState(
       prevState => ({
         images: [...prevState.images, ...rez],
@@ -74,23 +80,41 @@ export default class ImageGallery extends Component {
     this.setState({ error: 'error', status: 'rejected' });
   };
 
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+    // console.log('TOGGLE showModal', this.state.showModal)
+  };
+
+  openModal = e => {
+    if (e.target.nodeName === 'IMG') {
+      this.setState({ showModal: true });
+    }
+  };
+
+  setActiveId = i => {
+    this.setState({ activeEl: i });
+  };
+
   render() {
-    const { images, page, status } = this.state;
+    const { images, status, showModal, activeEl } = this.state;
 
     if (status === 'idle') {
       return <>{/* <p>'Введите название'</p> */}</>;
     }
-    //! - разобраться с ошибкой
-    // if (status === 'rejected') {
-    //    return (error.massage)
-    // }
+    if (status === 'rejected') {
+      return <p className="Button">Увы , ничего не найдено</p>;
+    }
 
     if (status === 'pending' || status === 'resolved') {
       return (
         <>
           <ul className="ImageGallery">
-            {images.map(({ id, tags, webformatURL }) => (
-              <li key={id} className="ImageGalleryItem">
+            {images.map(({ id, tags, webformatURL }, i) => (
+              <li
+                key={id + i * i}
+                className="ImageGalleryItem"
+                onClick={() => this.setActiveId(i)}
+              >
                 <ImageGalleryItem props={{ tags, webformatURL }} />
               </li>
             ))}
@@ -103,7 +127,19 @@ export default class ImageGallery extends Component {
                     )}
                 </ul> */}
           {images.length && (
-            <Button onLoadMore={this.loadMoreGallery} status={status} />
+            <Button
+              onLoadMore={this.loadMoreGallery}
+              status={status}
+              showModal={showModal}
+            />
+          )}
+
+          {showModal && (
+            <Modal
+              onClose={this.toggleModal}
+              // imageContent={images[activeEl].largeImageURL}
+              imageContent={images[activeEl]}
+            />
           )}
         </>
       );
@@ -197,16 +233,16 @@ export default class ImageGallery extends Component {
 //                         />
 //                     )}
 //                 </ul> */}
-//             {images.length && (
-//               <Button
-//                 onChangeState={this.changeState}
-//                 onScroll={this.scroll()}
-//                 page={page}
-//                 status={status}
-//                 onLoadMore={this.loadMoreGallery}
-//               />
-//             )}
-//           </>
+//           {images.length && (
+//             <Button
+//               onChangeState={this.changeState}
+//               onScroll={this.scroll()}
+//               page={page}
+//               status={status}
+//               onLoadMore={this.loadMoreGallery}
+// />
+//  )}
+// </>
 //         )
 //       }
 //     }

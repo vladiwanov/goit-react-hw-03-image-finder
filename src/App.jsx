@@ -1,49 +1,34 @@
 import React, { Component } from 'react';
 import Searchbar from './Components/Searchbar/Searchbar';
 import ImageGallery from 'Components/ImageGallery/ImageGallery';
-import Modal from './Components/Modal';
-
 const perPage = 12;
-// let page = 1;
 
 export default class App extends Component {
   state = {
     searchName: '',
-    showModal: false,
+    galleryLength: 0,
+    status: '',
+    page: 1,
   };
 
   getSearchName = name => {
+    if (name === '') {
+      alert('поле не должно быть пустым');
+      return;
+    }
     this.setState({ searchName: name });
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({ showModal: !showModal }));
-  };
-
   render() {
-    const { searchName, showModal } = this.state;
+    const { searchName, page } = this.state;
     return (
       <>
         <Searchbar onChangeName={this.getSearchName} />
         <ImageGallery
-          params={{ searchName, perPage }}
-          // onToggleModal={this.toggleModal}
+          params={{ searchName, perPage, page }}
+          onToggleModal={this.toggleModal}
+          onGetParametersForLoadButton={this.getParametersForLoadButton}
         />
-
-        {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <h2>Hi, it's a modal window</h2>
-            <i>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem
-              vitae at ab aspernatur, unde quas excepturi quia eaque illo quod,
-              omnis exercitationem alias, similique aliquam ipsam provident
-              molestiae pariatur doloribus?
-            </i>
-            <button className="Button" onClick={this.toggleModal}>
-              Close
-            </button>
-          </Modal>
-        )}
       </>
     );
   }

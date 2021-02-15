@@ -6,26 +6,32 @@ export default class Modal extends Component {
   state = {};
 
   componentDidMount() {
-    window.addEventListener('keydown', this.closeModal);
+    window.addEventListener('keydown', this.closeModalWithESC);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.closeModal);
+    window.removeEventListener('keydown', this.closeModalWithESC);
   }
 
-  closeModal = e => {
+  handleBackdropOnClick = e => {
+    if (e.currentTarget === e.target) {
+      this.props.onClose();
+      return;
+    }
+  };
+
+  closeModalWithESC = e => {
     if (e.code === 'Escape') {
-      console.log('нажали на ESC:', e.target.value);
       this.props.onClose();
     }
   };
 
   render() {
+    const activeEl = this.props.imageContent;
     return createPortal(
-      <div className="Overlay">
+      <div className="Overlay" onClick={this.handleBackdropOnClick}>
         <div className="Modal">
-          {/* <img src="" alt="" /> */}
-          {this.props.children}
+          <img src={activeEl.largeImageURL} alt={activeEl.tags} />
         </div>
       </div>,
       modalRoot,

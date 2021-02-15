@@ -1,8 +1,15 @@
 import LoaderButton from '../LoaderButton';
 
-export default function Button({ status, onLoadMore }) {
+export default function Button({
+  status,
+  showModal,
+  onLoadMore,
+  // onCloseModal
+}) {
   const loadMore = e => {
     e.preventDefault();
+    // onCloseModal()
+    showModal = false;
     onLoadMore();
   };
   return status === 'pending' ? (

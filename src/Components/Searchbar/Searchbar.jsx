@@ -10,7 +10,7 @@ class Searchbar extends Component {
 
   handleChangeName = event => {
     event.preventDefault();
-    this.props.onChangeName(this.state.name);
+    this.props.onChangeName(this.state.name.trim());
     this.setState({ name: '' });
   };
 
